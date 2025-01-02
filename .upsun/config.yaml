@@ -7,16 +7,7 @@ applications:
 
     # The runtime the application uses.
     # Complete list of available runtimes: https://docs.upsun.com/create-apps/app-reference/single-runtime-image.html#types
-    type: "python:3.11"
-
-    hooks:
-      build: |
-        # Fail the build if any errors occur
-        set -eu
-        # Download the latest version of pip
-        python3.11 -m pip install --upgrade pip
-        # Install dependencies
-        pip install -r requirements.txt 
+    type: "python:3.11" 
 
     # Choose which container profile (ratio CPU+RAM) your app will use. Default value comes from the image itself.
     # More information: https://docs.upsun.com/manage-resources/adjust-resources.html#adjust-a-container-profile
@@ -60,8 +51,6 @@ applications:
       locations:
         "/":
           passthru: true
-          
-        
 
     # Alternate copies of the application to run as background processes.
     # More information: https://docs.upsun.com/create-apps/app-reference/single-runtime-image.html#workers
@@ -104,9 +93,10 @@ applications:
       # More information: https://docs.upsun.com/create-apps/hooks/hooks-comparison.html#build-hook
       build: |
         set -eux
-        
-        # Add build steps here.
-        # echo 'I am a build step'
+        # Download the latest version of pip
+        python3.11 -m pip install --upgrade pip
+        # Install dependencies
+        pip install -r requirements.txt
         
       # The deploy hook is run after the app container has been started, but before it has started accepting requests.
       # More information: https://docs.upsun.com/create-apps/hooks/hooks-comparison.html#deploy-hook
