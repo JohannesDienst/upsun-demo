@@ -9,6 +9,15 @@ applications:
     # Complete list of available runtimes: https://docs.upsun.com/create-apps/app-reference/single-runtime-image.html#types
     type: "python:3.11"
 
+    hooks:
+      build: |
+        # Fail the build if any errors occur
+        set -eu
+        # Download the latest version of pip
+        python3.11 -m pip install --upgrade pip
+        # Install dependencies
+        pip install -r requirements.txt 
+
     # Choose which container profile (ratio CPU+RAM) your app will use. Default value comes from the image itself.
     # More information: https://docs.upsun.com/manage-resources/adjust-resources.html#adjust-a-container-profile
     # container_profile:
@@ -38,7 +47,7 @@ applications:
       commands:
         # The command to launch your app. If it terminates, it’s restarted immediately.
         # You can use the $PORT or the $SOCKET environment variable depending on the socket family of your upstream
-        start: "echo 'Put your web server command in here! You need to listen to \"$UNIX\" unix socket. Read more about it here: https://docs.upsun.com/create-apps/app-reference/single-runtime-image.html#web-commands'; sleep 60"
+        start: "uvicorn src.api.api:app --reload --host 0.0.0.0 --port 8000"
       # You can listen to a UNIX socket (unix) or a TCP port (tcp, default).
       # Whether your app should speak to the webserver via TCP or Unix socket. Defaults to tcp
       # More information: https://docs.upsun.com/create-apps/app-reference/single-runtime-image.html#where-to-listen
