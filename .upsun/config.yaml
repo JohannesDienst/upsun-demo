@@ -3,7 +3,7 @@ applications:
   image-converter:
     # Application source code directory
     source:
-      root: "/src"
+      root: "/"
 
     # The runtime the application uses.
     # Complete list of available runtimes: https://docs.upsun.com/create-apps/app-reference/single-runtime-image.html#types
