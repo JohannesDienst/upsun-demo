@@ -7,12 +7,12 @@ import base64
 
 app = FastAPI()
 
+from ..database.database_upsun import validate_api_key
 header_scheme = APIKeyHeader(name="X-API-Key")
 
 def check_api_key(api_key: str = Header(None)):
-    # In a real scenario, you would validate the API key against a database or a secure storage
-    valid_api_key = "12345"
-    if api_key != valid_api_key:
+    api_key_valid = validate_api_key(api_key)
+    if not api_key_valid:
         raise HTTPException(status_code=401, detail="Invalid API key")
 
 @app.get("/")
@@ -80,3 +80,38 @@ async def convertToFile(
         content=converted_content,
         media_type="image/{target_format}".format(target_format=file_extension)
     )
+
+from fastapi import FastAPI, HTTPException
+from datetime import datetime
+
+# Import the functions for managing API keys
+from ..database.database_upsun import Base, engine, Session, APIKey
+from ..database.database_upsun import get_api_keys, add_api_key, delete_api_key
+
+# Create an endpoint to get API keys for a specific user
+@app.get('/api_keys/{username}')
+def get_user_api_keys(username: str):
+    api_keys = get_api_keys(username)
+    if not api_keys:
+        raise HTTPException(status_code=404, detail=f'No API keys found for user: {username}')
+    
+    return api_keys
+
+# Create an endpoint to add a new API key for a user
+@app.post('/add_api_key/{username}/{expiration_date}')
+def add_user_api_key(username: str, expiration_date: datetime):
+    key = add_api_key(username, expiration_date)
+    return JSONResponse(
+        content={
+            "key":key,
+        },
+        status_code=200,
+    )
+
+@app.delete('/delete_api_key/{username}/{api_key_id}')
+def delete_user_api_key(username: str, api_key_id: str):
+    success = delete_api_key(username, api_key_id)
+    if success:
+        return {'message': f'API key {api_key_id} for user {username} deleted successfully.'}
+    else:
+        raise HTTPException(status_code=404, detail=f'API key {api_key_id} for user {username} not found.')

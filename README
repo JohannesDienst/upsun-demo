@@ -8,5 +8,3 @@ uvicorn src.api.api:app --reload --host 0.0.0.0 --port 8000
 ## Connect to Database
 
 https://docs.upsun.com/add-services.html#connect-to-a-service
-
-// TODO: https://neon.tech/postgresql/postgresql-python/connect
