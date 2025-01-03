@@ -19,8 +19,8 @@ applications:
     # side is in the form `<service name>:<endpoint name>`.
     # More information: https://docs.upsun.com/create-apps/app-reference/single-runtime-image.html#relationships
     
-    # relationships:
-    #   db:
+    relationships:
+      postgresql: 
     
 
     # Mounts define directories that are writable after the build is complete.
@@ -125,9 +125,9 @@ applications:
 # to power your Upsun project.
 # More information: https://docs.upsun.com/add-services.html
 # Full list of available services: https://docs.upsun.com/add-services.html#available-services
-# services:
-#   db:
-#     type: postgresql:14
+services:
+   postgresql:
+     type: postgresql:16
 
 
 # The routes of the project.
