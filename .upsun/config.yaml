@@ -20,7 +20,7 @@ applications:
     # More information: https://docs.upsun.com/create-apps/app-reference/single-runtime-image.html#relationships
     
     relationships:
-      postgresql: 
+      postgresql:
     
 
     # Mounts define directories that are writable after the build is complete.
