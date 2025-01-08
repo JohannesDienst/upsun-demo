@@ -19,7 +19,7 @@ class APIKey(Base):
     expiration_date = Column(DateTime, nullable=False)
 
 # Create an engine
-database_raw_url = "{POSTGRESQL_SCHEME://{POSTGRESQL_USERNAME}:{POSTGRESQL_PASSWORD}@{POSTGRESQL_HOST}:{POSTGRESQL_PORT}/{POSTGRESQL_PATH}"
+database_raw_url = "{POSTGRESQL_SCHEME}://{POSTGRESQL_USERNAME}:{POSTGRESQL_PASSWORD}@{POSTGRESQL_HOST}:{POSTGRESQL_PORT}/{POSTGRESQL_PATH}"
 
 database_json = {
     "POSTGRESQL_SCHEME": os.getenv('POSTGRESQL_SCHEME'),
