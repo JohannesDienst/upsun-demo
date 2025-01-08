@@ -19,12 +19,7 @@ class APIKey(Base):
     expiration_date = Column(DateTime, nullable=False)
 
 # Create an engine
-engine = create_engine(os.getenv('DATABASE_URL'), echo=True, future=True)
-print(str(os.getenv('POSTGRESQL_SCHEME')))
-print(str(os.getenv('POSTGRESQL_USERNAME')))
-print(str(os.getenv('POSTGRESQL_HOST')))
-print(str(os.getenv('POSTGRESQL_PORT')))
-print(str(os.getenv('POSTGRESQL_PATH')))
+engine = create_engine(os.getenv('POSTGRESQL_SCHEME'), echo=True, future=True)
 
 # Create all tables in the database which are defined by Base's subclasses
 Base.metadata.create_all(engine)
