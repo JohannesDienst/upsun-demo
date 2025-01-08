@@ -1,4 +1,5 @@
 from enum import Enum
+from pydantic import BaseModel
 from fastapi import FastAPI, File, UploadFile, Header, Depends, HTTPException
 from fastapi.responses import JSONResponse, Response
 from fastapi.security import APIKeyHeader
@@ -90,28 +91,46 @@ from ..database.database_upsun import get_api_keys, add_api_key, delete_api_key
 
 # Create an endpoint to get API keys for a specific user
 @app.get('/api_keys/{username}')
-def get_user_api_keys(username: str):
-    api_keys = get_api_keys(username)
+def get_user_api_keys(
+    username: str,
+    key: str):
+    api_key_valid = validate_api_key(key)
+    if not api_key_valid:
+        raise HTTPException(status_code=401, detail="Invalid API key")
+    api_keys = get_api_keys(username, key)
     if not api_keys:
         raise HTTPException(status_code=404, detail=f'No API keys found for user: {username}')
-    
     return api_keys
 
+class ApiKeyRequest(BaseModel):
+    expiration_date: datetime
+
 # Create an endpoint to add a new API key for a user
-@app.post('/add_api_key/{username}/{expiration_date}')
-def add_user_api_key(username: str, expiration_date: datetime):
-    key = add_api_key(username, expiration_date)
+@app.post('/add_api_key')
+def add_user_api_key(
+    request: ApiKeyRequest,
+    key: str):
+    api_key_valid = validate_api_key(key)
+    if not api_key_valid:
+        raise HTTPException(status_code=401, detail="Invalid API key")
+    return_value = add_api_key(key, request.expiration_date)
     return JSONResponse(
         content={
-            "key":key,
+            "key": return_value
         },
         status_code=200,
     )
 
-@app.delete('/delete_api_key/{username}/{api_key_id}')
-def delete_user_api_key(username: str, api_key_id: str):
-    success = delete_api_key(username, api_key_id)
+class ApiKeyDeleteRequest(BaseModel):
+    key_id: str
+    api_key: str
+@app.delete('/delete_api_key')
+def delete_user_api_key(request: ApiKeyDeleteRequest):
+    api_key_valid = validate_api_key(request.api_key)
+    if not api_key_valid:
+        raise HTTPException(status_code=401, detail="Invalid API key")
+    success = delete_api_key(request.key_id, request.api_key)
     if success:
-        return {'message': f'API key {api_key_id} for user {username} deleted successfully.'}
+        return {'message': f'API key {request.key_id} deleted successfully.'}
     else:
-        raise HTTPException(status_code=404, detail=f'API key {api_key_id} for user {username} not found.')
+        raise HTTPException(status_code=404, detail=f'API key {request.key_id} not found.')
