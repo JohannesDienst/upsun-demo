@@ -20,6 +20,11 @@ class APIKey(Base):
 
 # Create an engine
 engine = create_engine(os.getenv('DATABASE_URL'), echo=True, future=True)
+print(str(os.getenv('POSTGRESQL_SCHEME')))
+print(str(os.getenv('POSTGRESQL_USERNAME')))
+print(str(os.getenv('POSTGRESQL_HOST')))
+print(str(os.getenv('POSTGRESQL_PORT')))
+print(str(os.getenv('POSTGRESQL_PATH')))
 
 # Create all tables in the database which are defined by Base's subclasses
 Base.metadata.create_all(engine)

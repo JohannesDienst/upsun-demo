@@ -65,9 +65,8 @@ applications:
     # access:
 
     # Variables to control the environment. More information: https://docs.upsun.com/create-apps/app-reference/single-runtime-image.html#variables
-    variables:
-      env:
-        DATABASE_URL: "${POSTGRESQL_SCHEME}://${POSTGRESQL_USERNAME}:${POSTGRESQL_PASSWORD}@${POSTGRESQL_HOST}:${POSTGRESQL_PORT}/${POSTGRESQL_PATH}"
+    #variables:
+    #  env:
     #     # Add environment variables here that are static.
     #     PYTHONUNBUFFERED: "1"
 
