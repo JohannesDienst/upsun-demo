@@ -1,7 +1,7 @@
 import os
 import bcrypt
 import secrets, string
-from sqlalchemy import create_engine, Column, String, DateTime, Integer
+from sqlalchemy import create_engine, Column, String, DateTime, Integer, and_, or_
 from sqlalchemy.orm import declarative_base, sessionmaker
 from datetime import datetime
 
@@ -29,14 +29,11 @@ Base.metadata.create_all(engine)
 Session = sessionmaker(bind=engine, future=True)
 
 def generate_api_key(length=32):
-    # Define the characters that can be used in the API key
     characters = string.ascii_letters + string.digits
-    # Generate a random string of the specified length
     api_key = ''.join(secrets.choice(characters) for _ in range(length))
     return api_key
 
 def add_api_key(key, expiration_date):
-    # Retrieve username
     session = Session()
     keys = session.query(APIKey).filter().all()
     username = "null"
@@ -47,9 +44,8 @@ def add_api_key(key, expiration_date):
             username = db_key.username
             role = db_key.role
             break
-    if username in ["null"]:
-        # TODO return a proper error object
-        raise Exception("key has no username.")
+    if username is "null":
+        return None
     salt = bcrypt.gensalt()
     api_key = generate_api_key()
     hashed = bcrypt.hashpw(api_key.encode('utf-8'), salt)
@@ -72,23 +68,21 @@ def validate_api_key(api_key):
 
 def get_api_keys(username, api_key):
     session = Session()
-
-    keys = session.query(APIKey).filter(APIKey.username == username).all()
+    keys = session.query(APIKey).filter(
+            APIKey.username == username,
+        ).all()
     found = False
     for db_key in keys:
         found = bcrypt.checkpw(api_key.encode('utf-8'), db_key.api_key.encode('utf-8'))
         if found is True:
             break
     if found is False:
-        # TODO return a proper error object
-        raise Exception("API Key belongs to another user.")
-
+        return None
     session.close()
     return keys
 
 def delete_api_key(key_id, api_key):
     session = Session()
-
     keys = session.query(APIKey).filter().all()
     username = "null"
     for db_key in keys:
@@ -96,9 +90,8 @@ def delete_api_key(key_id, api_key):
         if found is True:
             username = db_key.username
             break
-    if username in ["null"]:
-        # TODO return a proper error object
-        raise Exception("key has no username.")
+    if username is "null":
+        return None
 
     key = session.query(APIKey).filter(APIKey.id == key_id and APIKey.username == username).first()
     if key:
@@ -108,4 +101,3 @@ def delete_api_key(key_id, api_key):
         return True
     session.close()
     return False
-

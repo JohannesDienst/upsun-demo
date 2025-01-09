@@ -98,6 +98,8 @@ def get_user_api_keys(
     if not api_key_valid:
         raise HTTPException(status_code=401, detail="Invalid API key")
     api_keys = get_api_keys(username, key)
+    if api_keys is None:
+        raise HTTPException(status_code=401, detail=f'API Key is correct but belongs to another user.')
     if not api_keys:
         raise HTTPException(status_code=404, detail=f'No API keys found for user: {username}')
     return api_keys
@@ -114,6 +116,8 @@ def add_user_api_key(
     if not api_key_valid:
         raise HTTPException(status_code=401, detail="Invalid API key")
     return_value = add_api_key(key, request.expiration_date)
+    if return_value is None:
+        raise HTTPException(status_code=500, detail='The API Key is valid but somehow there is no username. Please contact support.')
     return JSONResponse(
         content={
             "key": return_value
