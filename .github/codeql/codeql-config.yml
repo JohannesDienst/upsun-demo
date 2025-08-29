@@ -1,1 +1,16 @@
+queries:
+  - name: Use an external query (run a single query from an external CodeQL pack)
+    uses: octo-org/python-codeql-pack/show_ifs.ql@main
+  - name: Use a query suite file (run queries from a query suite in this repo)
+    uses: ./codeql-packs/complex-python-codeql-pack/rootAndBar.qls
+  - uses: security-and-quality
 
+packs:
+  python:
+    - octo-org/python-codeql-pack
+
+paths:
+  - src/image_converter
+
+paths-ignore:
+  - src/api
