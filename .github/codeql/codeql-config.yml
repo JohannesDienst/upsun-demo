@@ -7,7 +7,7 @@ queries:
 
 packs:
   python:
-    - octo-org/python-codeql-pack
+    - GreenPythonProject/GreenPythonAnalysis
 
 paths:
   - src/image_converter
